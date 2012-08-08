@@ -21,7 +21,7 @@ using namespace std;
 #include "CPU/GenHam.h"
 #include "CPU/simparam.h"
 #include "CPU/magnetization.h"
-#include "graphs.h"
+#include "../Graphs/graphs.h"
 #include <mpi.h>
 
 int main(int argc, char** argv){
@@ -57,7 +57,7 @@ int main(int argc, char** argv){
 
     vector <long double> eVec;
 
-    vector< graph > fileGraphs; //graph objects
+    vector< Graph > fileGraphs; //graph objects
     
     vector<double> EnergyWeightHigh;
     vector<double> MagnetizationWeightHigh;
@@ -92,13 +92,13 @@ int main(int argc, char** argv){
         { //skip the zeroth graph
 	
 	    //---High-Field---
-	        GENHAM HV(fileGraphs.at(i).NumberSites, J, h, fileGraphs.at(i).AdjacencyList, fileGraphs.at(i).LowField); 
+	        GENHAM HV(fileGraphs.at(i).Order, J, h, fileGraphs.at(i).AdjacencyList, fileGraphs.at(i).LowField); 
 
             LANCZOS lancz(HV.Vdim);  //dimension of reduced Hilbert space (Sz sector)
     
             HV.SparseHamJQ();  //generates sparse matrix Hamiltonian for Lanczos
             energy = lancz.Diag(HV, 1, 1, eVec); // Hamiltonian, # of eigenvalues to converge, 1 for -values only, 2 for vals AND vectors
-            chi = Magnetization(eVec, fileGraphs.at(i).NumberSites);
+            chi = Magnetization(eVec, fileGraphs.at(i).Order);
             EnergyWeightHigh.push_back(energy);
             MagnetizationWeightHigh.push_back(chi);
     

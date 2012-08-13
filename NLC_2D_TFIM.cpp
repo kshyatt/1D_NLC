@@ -71,10 +71,11 @@ int main(int argc, char** argv){
     
     J=1.;
     
-    for(double hh = 1; hh < 5; hh += 2.){
+    for(double hh = 0.5; hh < 5.5; hh += 0.5){
       h = hh;
       
-      EnergyWeightHigh.push_back(-h); //Weight for site zero
+      if( h/J < 3. ) EnergyWeightHigh.push_back(0.); //Weight for site zero
+      else EnergyWeightHigh.push_back(-h);
       MagnetWeightHigh.push_back(1.);
       
       double EnergyRunningSumHigh = EnergyWeightHigh[0];      
@@ -121,9 +122,9 @@ int main(int argc, char** argv){
         if (MagFlag) cout<<" Magnet Running Sum: "<<MagnetRunningSumHigh<<endl;
       }
       
-      fout<<"h= "<<h<<" J= "<<J;	
-      fout <<" Energy= "<< EnergyRunningSumHigh<<endl;
-      if(MagFlag) fout<<" Magnet= "<<MagnetRunningSumHigh<<endl;
+      fout<<h/J<<" ";	
+      fout<<EnergyRunningSumHigh<<endl;
+      if(MagFlag)fout<<MagnetRunningSumHigh<<endl;
       
       EnergyWeightHigh.clear();
       MagnetWeightHigh.clear();

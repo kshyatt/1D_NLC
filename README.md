@@ -11,12 +11,32 @@ This project aims to provide a free implementation of the [Numerical Linked Clus
 Installation
 ============
 
-You will need to install a few libraries to run the NLC code. If you would like to use the GPU features, you should install the [CUDA toolkit](http://www.nvidia.com/content/cuda/cuda-downloads.html), following the instructions provided by NVIDIA for your operating system and architecture. You should also install the LAPACK and BLAS libraries, which can be found in both apt and yum. If you are using Mac OS/X, you will need to modify the makefiles. Remove `-lblas` and `-llapack` from the `LIBS` line, and add instead `-framework Accelerate`. You will also need to add `-arch=x86_64` to `CFLAGS`. If you want to use the GPU code, you should download it from here: b369fb264fe2de074c04deef9afd69fce023580d . You may need to change the paths in `NLC_*_TFIM.cu` and in `makefile2d` to use this code. Simply change the `../CUDA/Lanczos` to the folder where you downloaded `hamiltonian.*`, `lanczos.*`, etc. 
+You will need to install a few libraries to run the NLC code. If you would like to use the GPU features, you should install the [CUDA toolkit](http://www.nvidia.com/content/cuda/cuda-downloads.html), following the instructions provided by NVIDIA for your operating system and architecture. Note that under Linux, if you are running a graphical environment using X11, you will need to temporarily stop X11 in order to install CUDA. NLC uses OpenMP, which is supported in g++ since version 4.2 as well as icpc since 10.1. The Makefiles assume g++. If you are using icpc, simply change `g++` after `CC` to `icpc` and switch `-fopenmp` to `-openmp` on the `CFLAGS` line. NLC doesn't use any OpenMP 3.0 features. 
 
 Running NLC
 ===========
 
-NLC takes several arguments from `param.dat`, including whether you would like to find the groundstate of the Hamiltonian (not necessary if you only care about energies), the Sz spin sector you are interested in (not relevant for the TF Ising model, as it is not Sz preserving), and the value of `J`, the coupling constant for the bond operators. NLC iterates over several values of `h`, the magnetic field strength. You can easily modify these in `NLC_*_TFIM.*`. NLC reads in the clusters it will operate on. You can specify the file which contains these clusters in the source file for NLC. We plan to allow you to pass the filename from the command line in a future release. If you would like to turn GPU usage on, simply pass `-g` or `--gpu` as a command line argument to your executable. GPU selection should be available in a future release. NLC will dump the final energies it calculates into a file whose name you can specify in `NLC_*_TFIM.*`. If you want to use/create your own clusters, you can use the [graphs](http://github.com/rgmelko/Graphs) utility. Presently this only supports graphs on a square lattice, but further releases should extend this capability.
+NLC takes several arguments from `param.dat`, including whether you would like to find the groundstate of the Hamiltonian (not necessary if you only care about energies), the Sz spin sector you are interested in (not relevant for the TF Ising model, as it is not Sz preserving), and the value of `J`, the coupling constant for the bond operators. NLC iterates over several values of `h`, the magnetic field strength. You can easily modify these in `NLC_*_TFIM.*`. NLC reads in the clusters it will operate on. You can specify the file which contains these clusters in the source file for NLC. We plan to allow you to pass the filename from the command line in a future release. If you would like to turn GPU usage on, simply pass `-g` or `--gpu` as a command line argument to your executable. GPU selection should be available in a future release. NLC will dump the final energies it calculates into a file whose name you can specify in `NLC_*_TFIM.*` or as a command line argument using `-o $FILENAME` or `--output $FILENAME$. You will need to select the file containing the graphs NLC will use through the command line, by passing `-i $FILENAME` or `--input $FILENAME`. If you want to use/create your own clusters, you can use the [graphs](http://github.com/rgmelko/Graphs) utility. Presently this only supports graphs on a square lattice, but further releases should extend this capability.
+
+Usage Examples
+==============
+
+Reading in graphs from a file called `rectanglegraphs.dat`, without calculating magnetization and using the default output file:
+`./2d-cpu.out -i rectanglegraphs.dat`
+
+Reading in graphs from a file called `rectanglegraphs.dat`, without calculating magnetization and using a custom output file:
+`./2d-cpu.out -i rectanglegraphs.dat -o rectangleresults.dat`
+
+Reading in graphs from a file called `order4bondbasedgraphs.dat`, calculating magnetization and using the default output file:
+`./2d-cpu.out -m -i order4bondbasedgraphs.dat`
+
+We can also use the GPU executable if we have CUDA installed, as shown below.
+
+Reading in graphs from a file called `rectanglegraphs.dat`, without calculating magnetization and using the default output file with the GPU:
+`./2d-gpu.out -g -i rectanglegraphs.dat`
+
+Reading in graphs from a file called `rectanglegraphs.dat`, calculating magnetization and using a custom output file with the GPU:
+`./2d-gpu.out -g -m -i rectanglegraphs.dat -o gpumagnetization.dat`
 
 TODO
 ====
